@@ -24,7 +24,7 @@ def result():
         result = calculator.calculate(number, operator)
         if calculator.divided_zero:
             result = 'Cannot Divide by Zero'
-
+            calculator.divided_zero = False
     return jsonify({"result": result})  # Return JSON response
 
 
