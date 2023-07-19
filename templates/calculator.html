@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Simple Calculator</h1>
+        <form action="/" method="POST" class="text-center">
+            <input type="text" name="input" id="display" class="form-control mb-2" readonly>
+            <div class="row" style="padding: 5px">
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('7')">7</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('8')">8</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('9')">9</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block" onclick="calculateResult('+')">+</button>
+                </div>
+            </div>
+            <div class="row" style="padding: 5px">
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('4')">4</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('5')">5</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('6')">6</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block" onclick="calculateResult('-')">-</button>
+                </div>
+            </div>
+            <div class="row" style="padding: 5px">
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('1')">1</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('2')">2</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('3')">3</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block" onclick="calculateResult('*')">*</button>
+                </div>
+            </div>
+
+            <div class="row" style="padding: 5px">
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-danger btn-block" onclick="clearDisplay()">C</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary btn-block" onclick="appendToDisplay('0')">0</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block" onclick="calculateResult('=')">=</button>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary btn-block" onclick="calculateResult('/')">/</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- JavaScript to interact with the calculator API endpoints -->
+    <script>
+        let new_number = false
+        // Function to append clicked buttons to the display
+        function appendToDisplay(value) {
+            if (new_number) {
+                document.getElementById("display").value = '';
+            }
+            document.getElementById("display").value += value;
+            new_number = false
+        }
+
+        // Function to send the input to the API and get the result
+        function calculateResult(operator) {
+            const input = document.getElementById("display").value;
+            const requestData = { input, operator };
+
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("display").value = data.result;
+            });
+            new_number = true
+        }
+
+        // Function to clear the display
+        function clearDisplay() {
+            const operator = 'clear'
+            const input = 0
+            const requestData = { input, operator };
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            });
+            document.getElementById("display").value = "";
+        }
+    </script>
+</body>
+</html>
